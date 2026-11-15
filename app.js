@@ -75,9 +75,8 @@ function renderTiles() {
   }).join("");
   if ("setAppBadge" in navigator) { (pending ? navigator.setAppBadge(pending) : navigator.clearAppBadge()).catch(() => {}); }
 }
-$("tiles").addEventListener("click", e => {
-  const t = e.target.closest(".tile"); if (!t) return;
-  const b = BUTTONS.find(x => x.key === t.dataset.key);
+function openTile(key) {
+  const b = BUTTONS.find(x => x.key === key);
   if (b.special === "adet") { renderAdetList(); go("adetPage"); return; }
   $("storeTitle").textContent = b.label;
   $("storeList").innerHTML = STORES.map(s => {
@@ -86,11 +85,17 @@ $("tiles").addEventListener("click", e => {
   }).join("");
   $("storeList").dataset.key = b.key;
   go("storePage");
+}
+const withPop = (el, fn) => { if (el.dataset.busy) return; el.dataset.busy = "1"; el.classList.add("pop"); setTimeout(() => { delete el.dataset.busy; el.classList.remove("pop"); fn(); }, 190); };
+$("tiles").addEventListener("click", e => {
+  const t = e.target.closest(".tile"); if (!t) return;
+  withPop(t, () => openTile(t.dataset.key));
 });
 $("storeList").addEventListener("click", e => {
   const s = e.target.closest(".store"); if (!s) return;
-  openMail(BUTTONS.find(x => x.key === $("storeList").dataset.key), s.dataset.store);
+  withPop(s, () => openMail(BUTTONS.find(x => x.key === $("storeList").dataset.key), s.dataset.store));
 });
+$("logoBtn").addEventListener("click", () => { stack.length = 0; show("home"); history.replaceState(null, "", location.pathname + location.search); });
 
 // ---------- /admin ----------
 function renderAdmin() {
