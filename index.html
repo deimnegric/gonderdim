@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GÖNDERDİM</title>
+<meta name="theme-color" content="#f4ecd8">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="GÖNDERDİM">
+<style>
+:root{--bg:#f4ecd8;--card:#fbf6e9;--ink:#1d1b17;--mut:#7a7261;--line:#d9cdb0;--red:#e5322d;--ok:#2f7d4f}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+body{min-height:100vh;padding:env(safe-area-inset-top) 16px calc(24px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;gap:10px;padding:18px 0 12px}
+header img{width:44px;height:44px}
+header h1{font-size:22px;letter-spacing:1.5px;margin:0;font-weight:800;flex:1}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.tile{position:relative;background:var(--card);border:1.5px solid var(--ink);border-radius:18px;padding:22px 10px;min-height:96px;font-size:15px;font-weight:700;text-align:center;color:var(--ink);box-shadow:3px 3px 0 var(--ink);display:flex;align-items:center;justify-content:center}
+.tile:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.badge{position:absolute;top:-9px;right:-7px;min-width:26px;height:26px;border-radius:13px;background:var(--red);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg)}
+.page{display:none}.page.show{display:block}
+.back{background:none;border:none;font-size:15px;font-weight:700;padding:6px 0;color:var(--ink)}
+h2{font-size:19px;margin:6px 0 14px}
+.store{display:block;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:15px 14px;margin-bottom:9px;font-size:15px;font-weight:600;color:var(--ink)}
+.store b{display:inline-block;min-width:48px}
+.store:active{background:#efe5c9}
+label{display:block;font-size:12px;font-weight:700;color:var(--mut);margin:12px 0 4px;text-transform:uppercase;letter-spacing:.5px}
+input,select,textarea{width:100%;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:16px;color:var(--ink);font-family:inherit}
+input:focus,textarea:focus{outline:none;border-color:var(--ink)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.photo{aspect-ratio:1;border:2px dashed var(--mut);border-radius:14px;background:var(--card);display:flex;align-items:center;justify-content:center;color:var(--mut);font-weight:700;font-size:13px;text-align:center;overflow:hidden;position:relative}
+.photo img{width:100%;height:100%;object-fit:cover}
+.photo input{position:absolute;inset:0;opacity:0}
+.primary{width:100%;margin-top:18px;background:var(--ink);color:var(--bg);border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:800}
+.primary:disabled{opacity:.5}
+.ghost{width:100%;margin-top:8px;background:none;color:var(--ink);border:1.5px solid var(--ink);border-radius:14px;padding:12px;font-size:14px;font-weight:700}
+.sub{font-size:13px;color:var(--mut);margin:0 0 6px}
+.item{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
+.item .top{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--mut);margin-bottom:6px}
+.item .imgs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}
+.item .imgs img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px}
+.item p{margin:2px 0;font-size:14px}
+.tag{font-size:11px;font-weight:800;border-radius:8px;padding:3px 7px;background:#f3d9a7}
+.tag.ok{background:#cfe8d7;color:var(--ok)}
+.acts{display:flex;gap:8px;margin-top:8px}
+.acts button{flex:1;border-radius:10px;padding:10px;font-weight:700;border:1.5px solid var(--ink);background:none;color:var(--ink);font-size:13px}
+.acts .go{background:var(--ink);color:var(--bg)}
+.sep{height:1.5px;background:var(--line);margin:20px 0 14px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:12px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90%;text-align:center}
+.toast.show{opacity:1}
+dialog{border:2px solid var(--ink);border-radius:18px;background:var(--bg);color:var(--ink);width:min(92vw,420px);padding:18px}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+</style>
+</head>
+<body>
+<header>
+  <img src="icons/logo.svg" alt="">
+  <h1>GÖNDERDİM</h1>
+</header>
+
+<!-- ANA SAYFA: 6 buton -->
+<main id="home" class="page show">
+  <div class="grid" id="tiles"></div>
+</main>
+
+<!-- MAĞAZA SEÇİMİ -->
+<main id="storePage" class="page">
+  <button class="back" data-back>← Geri</button>
+  <h2 id="storeTitle"></h2>
+  <p class="sub">Mağazanı seç, mail hazır şekilde açılsın.</p>
+  <div id="storeList"></div>
+</main>
+
+<!-- ADET TOPLATMA (BS: gelen bildirimler) -->
+<main id="adetPage" class="page">
+  <button class="back" data-back>← Geri</button>
+  <h2>Adet Toplatma Bildirimleri</h2>
+  <p class="sub">Mağazaların gönderdikleri. Düzenleyip onaylayınca mail hazır açılır.</p>
+  <div id="adetList"></div>
+</main>
+
+<!-- /talep : mağazaların ürün bildirimi -->
+<main id="talepPage" class="page">
+  <h2>Adet Bildirimi</h2>
+  <div class="row">
+    <div class="photo" id="ph1"><span>+ Fotoğraf 1</span><input type="file" accept="image/*" capture="environment"></div>
+    <div class="photo" id="ph2"><span>+ Fotoğraf 2</span><input type="file" accept="image/*" capture="environment"></div>
+  </div>
+  <label>Mağaza adı</label>
+  <input id="fStore" list="storeOpts" placeholder="Mağaza adı" autocomplete="off">
+  <datalist id="storeOpts"></datalist>
+  <div class="row">
+    <div><label>Ürün kodu</label><input id="fKod" inputmode="numeric" placeholder="Sadece sayı"></div>
+    <div><label>Ürün adı</label><input id="fAd" placeholder="Ürün adı"></div>
+  </div>
+  <div class="row">
+    <div><label>SKT</label><input id="fSkt" inputmode="numeric" placeholder="Sayı / boşluk"></div>
+    <div><label>PNO</label><input id="fPno" placeholder="Sayı / harf"></div>
+  </div>
+  <div class="row">
+    <div><label>Ürün problemi</label><input id="fProb" placeholder="Sadece harf"></div>
+    <div><label>Adet</label><input id="fAdet" inputmode="numeric" placeholder="Sayı"></div>
+  </div>
+  <button class="primary" id="sendAdet">Gönder</button>
+  <div class="sep"></div>
+  <h2>Arşiv</h2>
+  <p class="sub">Gönderildi – onay bekleniyor ve onaylananlar</p>
+  <div id="archive"></div>
+</main>
+
+<!-- /admin : ayarlar -->
+<main id="adminPage" class="page">
+  <h2>Admin – Mail Adresleri</h2>
+  <p class="sub">Her buton için alıcı mail adresi. Birden fazla adres için virgül kullan.</p>
+  <div id="mailFields"></div>
+  <button class="primary" id="saveMails">Kaydet</button>
+  <div class="sep"></div>
+  <button class="ghost" id="notifBtn">Bu cihazda bildirimleri aç</button>
+</main>
+
+<!-- Düzenleme -->
+<dialog id="editDlg">
+  <h2>Bildirimi düzenle</h2>
+  <label>Mağaza</label><input id="eStore">
+  <div class="row"><div><label>Ürün kodu</label><input id="eKod" inputmode="numeric"></div><div><label>Ürün adı</label><input id="eAd"></div></div>
+  <div class="row"><div><label>SKT</label><input id="eSkt"></div><div><label>PNO</label><input id="ePno"></div></div>
+  <div class="row"><div><label>Problem</label><input id="eProb"></div><div><label>Adet</label><input id="eAdet" inputmode="numeric"></div></div>
+  <div class="acts"><button id="eCancel">Vazgeç</button><button class="go" id="eSave">Kaydet</button></div>
+</dialog>
+
+<div class="toast" id="toast"></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
