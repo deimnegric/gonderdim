@@ -86,7 +86,20 @@ function openTile(key) {
   $("storeList").dataset.key = b.key;
   go("storePage");
 }
-const withPop = (el, fn) => { if (el.dataset.busy) return; el.dataset.busy = "1"; el.classList.add("pop"); setTimeout(() => { delete el.dataset.busy; el.classList.remove("pop"); fn(); }, 190); };
+function flyPlane(el) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const r = el.getBoundingClientRect();
+  const p = document.createElement("div"); p.className = "fly";
+  p.innerHTML = '<svg viewBox="0 0 48 48" width="34" height="34"><path d="M4 22 L44 6 L30 42 L22 28 Z" fill="#fbf6e9" stroke="#3a352c" stroke-width="3" stroke-linejoin="round"/><path d="M22 28 L44 6" stroke="#3a352c" stroke-width="3" stroke-linecap="round"/></svg>';
+  p.style.left = (r.left + r.width / 2 - 17) + "px"; p.style.top = (r.top + r.height / 2 - 17) + "px";
+  document.body.appendChild(p);
+  p.animate([
+    { transform: "translate(0,0) rotate(0) scale(.5)", opacity: 0 },
+    { transform: "translate(8px,-12px) rotate(-8deg) scale(1.1)", opacity: 1, offset: .25 },
+    { transform: "translate(150px,-130px) rotate(-18deg) scale(.7)", opacity: 0 }
+  ], { duration: 560, easing: "cubic-bezier(.3,.7,.3,1)" }).onfinish = () => p.remove();
+}
+const withPop = (el, fn) => { if (el.dataset.busy) return; el.dataset.busy = "1"; el.classList.add("pop"); flyPlane(el); setTimeout(() => { delete el.dataset.busy; el.classList.remove("pop"); fn(); }, 320); };
 $("tiles").addEventListener("click", e => {
   const t = e.target.closest(".tile"); if (!t) return;
   withPop(t, () => openTile(t.dataset.key));
