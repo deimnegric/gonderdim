@@ -1,11 +1,11 @@
 // Firebase Console > Proje ayarları > Web uygulaması bölümünden aldığın değerleri yapıştır.
 export const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "000000000000",
-  appId: "1:000000000000:web:xxxxxxxx"
+  apiKey: "AIzaSyCvIM0QOwopZIs2Sww8hLUqpOjYNsBC1vQ",
+  authDomain: "gonderdim.firebaseapp.com",
+  projectId: "gonderdim",
+  storageBucket: "gonderdim.firebasestorage.app",
+  messagingSenderId: "279582269346",
+  appId: "1:279582269346:web:e5b23afdbd0fb36d979cfb"
 };
 
 // Firebase Console > Proje ayarları > Cloud Messaging > Web Push sertifikaları > anahtar çifti
