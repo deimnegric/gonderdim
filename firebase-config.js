@@ -9,7 +9,7 @@ export const firebaseConfig = {
 };
 
 // Firebase Console > Proje ayarları > Cloud Messaging > Web Push sertifikaları > anahtar çifti
-export const VAPID_KEY = "";
+export const VAPID_KEY = "BGYklCZt4dDC9RiyX5HmrpfIT9Z6pZlLATfc4XQ2goSsMgOr6jUk05hMx1kIPaEdZX2HjOE5cVuYy8wj2Rw3BN4";
 
 // Mağaza adet bildirimi gönderince çağrılacak n8n webhook adresi (push bildirimi için). Boş bırakılabilir.
 export const NOTIFY_WEBHOOK = "";
