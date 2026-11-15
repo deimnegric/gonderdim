@@ -2,6 +2,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/fireba
 import { getFirestore, doc, getDoc, setDoc, collection, addDoc, onSnapshot, query, orderBy, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { getMessaging, getToken, isSupported } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging.js";
 import { firebaseConfig, VAPID_KEY, NOTIFY_WEBHOOK } from "./firebase-config.js";
+import * as cfg from "./firebase-config.js";
+const SEND_URL = cfg.N8N_SEND_WEBHOOK || "", SEND_SECRET = cfg.N8N_SECRET || "";
 
 const STORES = [
   "C971 Atatürk Cd.", "C963 Anıt", "C974 Larende", "C981 Ahmet Özcan",
@@ -257,6 +259,17 @@ $("adetList").addEventListener("click", async e => {
   if (act === "ok") {
     const to = (mails.adet || "").trim();
     if (!to) { toast("Adet toplatma için mail adresi tanımlı değil (/admin)"); return; }
+    if (SEND_URL) {
+      e.target.disabled = true; toast("Taslak hazırlanıyor…");
+      try {
+        const res = await fetch(SEND_URL, { method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ secret: SEND_SECRET, to, subject: "Adet toplatma hk.", body: adetBody(r), img1: r.img1 || "", img2: r.img2 || "" }) });
+        if (!res.ok) throw new Error(res.status);
+        await updateDoc(doc(db, "reports", id), { status: "approved", approvedAt: serverTimestamp() });
+        toast("Taslak hazır – Gmail açılıyor, kontrol edip gönder"); setTimeout(() => { location.href = "https://mail.google.com/mail/u/0/#drafts"; }, 1400);
+      } catch (err) { console.error(err); toast("Taslak oluşturulamadı, tekrar dene"); }
+      e.target.disabled = false; return;
+    }
     await updateDoc(doc(db, "reports", id), { status: "approved", approvedAt: serverTimestamp() });
     location.href = `mailto:${to}?subject=${encodeURIComponent("Adet toplatma hk.")}&body=${encodeURIComponent(adetBody(r))}`;
     if (r.img1 || r.img2) setTimeout(() => toast("Görselleri eklemek için 'Görselleri paylaş' butonunu kullan"), 1500);

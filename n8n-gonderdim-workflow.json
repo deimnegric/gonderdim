@@ -1,0 +1,85 @@
+{
+  "name": "GÖNDERDİM – Adet toplatma Gmail taslağı",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gonderdim-adet-DEGISTIR-uzun-rastgele",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "gonderdim-adet"
+    },
+    {
+      "parameters": {
+        "jsCode": "const b = $json.body || {};\nif (b.secret !== 'DEGISTIR-GIZLI-KELIME') throw new Error('yetkisiz');\nif (!b.to) throw new Error('alici yok');\nconst binary = {};\nlet n = 0;\nfor (const k of ['img1', 'img2']) {\n  if (b[k]) {\n    n++;\n    const data = b[k].split(',')[1];\n    binary['gorsel' + n] = await this.helpers.prepareBinaryData(Buffer.from(data, 'base64'), 'gorsel' + n + '.jpg', 'image/jpeg');\n  }\n}\nreturn [{ json: { to: b.to, subject: b.subject, message: b.body }, binary }];"
+      },
+      "name": "Hazirla",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "create",
+        "subject": "={{ $json.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.message }}",
+        "options": {
+          "sendTo": "={{ $json.to }}",
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "={{ Object.keys($binary).join(',') }}"
+              }
+            ]
+          }
+        }
+      },
+      "name": "Gmail Taslak",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Hazirla",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hazirla": {
+      "main": [
+        [
+          {
+            "node": "Gmail Taslak",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {}
+}
