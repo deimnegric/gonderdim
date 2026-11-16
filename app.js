@@ -152,8 +152,8 @@ function compress(file, max = 900, q = 0.6) {
     img.onerror = rej; img.src = url;
   });
 }
-const photoHTML = (i, n) => n ? `<img src="${n}"><input type="file" accept="image/*">`
-  : `<span>+ Fotoğraf ${i + 1}</span><input type="file" accept="image/*">`;
+const photoHTML = (i, n) => n ? `<img src="${n}"><input type="file" accept="image/*" capture="environment">`
+  : `<span>+ Fotoğraf ${i + 1}</span><input type="file" accept="image/*" capture="environment">`;
 // innerHTML yenilense de çalışsın diye olay delegasyonu
 document.addEventListener("change", async e => {
   const box = e.target.closest("#ph1,#ph2"); if (!box || !e.target.files) return;
@@ -309,37 +309,3 @@ renderTiles();
 if (route === "talep") { initTalep(); show("talepPage"); }
 else if (route === "admin") { renderAdmin(); show("adminPage"); }
 loadMails().then(() => { if (route === "admin") renderAdmin(); listen(); });
-
-// ---------- Açılış animasyonu: uçak alttan gelir, logo yerine konar, renk dalgası sayfayı açar ----------
-function playIntro() {
-  const root = document.documentElement;
-  if (!root.classList.contains("intro")) return;
-  const done = () => root.classList.remove("intro");
-  try { sessionStorage.setItem("gd_intro", "1"); } catch {}
-  try {
-    const ov = $("intro"), plane = $("introPlane");
-    const lr = $("logoBtn").querySelector("img").getBoundingClientRect();
-    const W = innerWidth, H = innerHeight, cx = lr.left + lr.width / 2, cy = lr.top + lr.height / 2;
-    const R = Math.hypot(Math.max(cx, W - cx), Math.max(cy, H - cy)) + 4;
-    const fly = plane.animate([
-      { transform: `translate(${W / 2 - 32}px,${H + 40}px) rotate(-8deg) scale(1)`, opacity: 1 },
-      { transform: `translate(${W * .72 - 32}px,${H * .6}px) rotate(-32deg) scale(1.15)`, opacity: 1, offset: .45 },
-      { transform: `translate(${W * .3 - 32}px,${H * .3}px) rotate(-10deg) scale(1.05)`, opacity: 1, offset: .75 },
-      { transform: `translate(${cx - 32}px,${cy - 32}px) rotate(0deg) scale(.9)`, opacity: 1 }
-    ], { duration: 950, easing: "cubic-bezier(.4,.1,.3,1)", fill: "forwards" });
-    fly.onfinish = () => {
-      ["#d6e4d4", "#f1d9c9", "#f4ecd8"].forEach((c, i) => {
-        const w = document.createElement("div"); w.className = "intro-wave";
-        w.style.cssText = `background:${c};width:${2 * R}px;height:${2 * R}px;left:${cx - R}px;top:${cy - R}px`;
-        ov.insertBefore(w, plane);
-        w.animate([{ transform: "scale(0)" }, { transform: "scale(1)" }], { duration: 700, delay: i * 140, easing: "cubic-bezier(.5,0,.2,1)", fill: "forwards" });
-      });
-      plane.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 250, delay: 780, fill: "forwards" });
-      setTimeout(() => {
-        ov.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, fill: "forwards" }).onfinish = () => { ov.remove(); };
-        done();
-      }, 1000);
-    };
-  } catch (e) { console.warn(e); done(); }
-}
-playIntro();
