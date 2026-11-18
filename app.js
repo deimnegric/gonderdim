@@ -26,6 +26,8 @@ const BUTTONS = [
     body: s => `Merhaba Elif Hanım,\n${s}\n\nKasa hata formunu paylaşabilir misiniz?\n\n${SIGN}` },
 ];
 
+// Her butonun kendi soft rengi (siyah zeminde gözü yormayan pastel tonlar)
+const TONES = { asansor: "#e0b89c", appstore: "#a8c3a4", gplay: "#9dbbd0", yatay: "#d8c796", adet: "#c5a9cc", kasa: "#dca5a5" };
 const $ = id => document.getElementById(id);
 const toast = (m) => { const t = $("toast"); t.textContent = m; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 2600); };
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -80,10 +82,10 @@ function renderTiles() {
   const pending = reports.filter(r => r.status === "pending").length;
   const list = admin ? BUTTONS : BUTTONS.filter(b => b.special === "adet");
   $("tiles").classList.toggle("single", !admin);
-  $("tiles").innerHTML = list.map(b => {
+  $("tiles").innerHTML = list.map((b, idx) => {
     const badge = (b.special === "adet" && admin && pending > 0) ? `<span class="badge">${pending}</span>` : "";
     const label = admin ? b.label : "Adet Bildirimi Gönder";
-    return `<button class="tile" data-key="${b.key}">${esc(label)}${badge}</button>`;
+    return `<button class="tile" data-key="${b.key}" style="--c:${TONES[b.key] || "#a8bfa5"};--i:${idx}">${esc(label)}${badge}</button>`;
   }).join("");
   if ("setAppBadge" in navigator) { (admin && pending ? navigator.setAppBadge(pending) : navigator.clearAppBadge()).catch(() => {}); }
 }
@@ -91,9 +93,9 @@ function openTile(key) {
   const b = BUTTONS.find(x => x.key === key);
   if (b.special === "adet") { if (isAdmin()) { renderAdetList(); go("adetPage"); } else { initTalep(); go("talepPage"); } return; }
   $("storeTitle").textContent = b.label;
-  $("storeList").innerHTML = STORES.map(s => {
+  $("storeList").innerHTML = STORES.map((s, si) => {
     const [kod, ...rest] = s.split(" ");
-    return `<button class="store" data-store="${esc(s)}"><b>${esc(kod)}</b> ${esc(rest.join(" "))}</button>`;
+    return `<button class="store" data-store="${esc(s)}" style="--i:${si}"><b>${esc(kod)}</b> ${esc(rest.join(" "))}</button>`;
   }).join("");
   $("storeList").dataset.key = b.key;
   go("storePage");
@@ -332,36 +334,23 @@ if (route === "talep") { initTalep(); show("talepPage"); }
 else if (route === "admin") { renderAdmin(); show("adminPage"); }
 loadMails().then(() => { if (route === "admin") renderAdmin(); listen(); });
 
-// ---------- Açılış animasyonu: uçak alttan gelir, logo yerine konar, renk dalgası sayfayı açar ----------
+// ---------- Açılış: el şıklatır, ekran kararır, siyah sayfada butonlar sırayla gelir ----------
 function playIntro() {
   const root = document.documentElement;
   if (!root.classList.contains("intro")) return;
-  const done = () => root.classList.remove("intro");
   try { sessionStorage.setItem("gd_intro", "1"); } catch {}
-  try {
-    const ov = $("intro"), plane = $("introPlane");
-    const lr = $("logoBtn").querySelector("img").getBoundingClientRect();
-    const W = innerWidth, H = innerHeight, cx = lr.left + lr.width / 2, cy = lr.top + lr.height / 2;
-    const R = Math.hypot(Math.max(cx, W - cx), Math.max(cy, H - cy)) + 4;
-    const fly = plane.animate([
-      { transform: `translate(${W / 2 - 32}px,${H + 40}px) rotate(-8deg) scale(1)`, opacity: 1 },
-      { transform: `translate(${W * .72 - 32}px,${H * .6}px) rotate(-32deg) scale(1.15)`, opacity: 1, offset: .45 },
-      { transform: `translate(${W * .3 - 32}px,${H * .3}px) rotate(-10deg) scale(1.05)`, opacity: 1, offset: .75 },
-      { transform: `translate(${cx - 32}px,${cy - 32}px) rotate(0deg) scale(.9)`, opacity: 1 }
-    ], { duration: 950, easing: "cubic-bezier(.4,.1,.3,1)", fill: "forwards" });
-    fly.onfinish = () => {
-      ["#d6e4d4", "#f1d9c9", "#f4ecd8"].forEach((c, i) => {
-        const w = document.createElement("div"); w.className = "intro-wave";
-        w.style.cssText = `background:${c};width:${2 * R}px;height:${2 * R}px;left:${cx - R}px;top:${cy - R}px`;
-        ov.insertBefore(w, plane);
-        w.animate([{ transform: "scale(0)" }, { transform: "scale(1)" }], { duration: 700, delay: i * 140, easing: "cubic-bezier(.5,0,.2,1)", fill: "forwards" });
-      });
-      plane.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 250, delay: 780, fill: "forwards" });
-      setTimeout(() => {
-        ov.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, fill: "forwards" }).onfinish = () => { ov.remove(); };
-        done();
-      }, 1000);
-    };
-  } catch (e) { console.warn(e); done(); }
+  const ov = $("intro"), v = $("introVideo");
+  let finished = false;
+  const finish = () => {
+    if (finished) return; finished = true;
+    root.classList.remove("intro");               // butonlar burada sırayla animasyonla gelir
+    ov.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 450, easing: "ease", fill: "forwards" }).onfinish = () => ov.remove();
+  };
+  v.addEventListener("ended", finish);
+  v.addEventListener("error", finish);
+  v.addEventListener("stalled", () => setTimeout(() => { if (v.currentTime === 0) finish(); }, 1200));
+  const p = v.play(); if (p && p.catch) p.catch(finish);
+  setTimeout(() => { if (v.currentTime === 0) finish(); }, 2500);   // video hiç başlamadıysa geç
+  setTimeout(finish, 4500);                                          // her durumda bitir
 }
 playIntro();

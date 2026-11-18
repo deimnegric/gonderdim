@@ -4,17 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>GÖNDERDİM</title>
-<meta name="theme-color" content="#f4ecd8">
+<meta name="theme-color" content="#111313">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/logo.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="GÖNDERDİM">
 <script>
-try{if(!location.hash&&!sessionStorage.getItem("gd_intro")&&!matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.classList.add("intro");setTimeout(function(){document.documentElement.classList.remove("intro")},5000)}}catch(e){}
+try{if(!location.hash&&!sessionStorage.getItem("gd_intro")&&!matchMedia("(prefers-reduced-motion: reduce)").matches&&matchMedia("(max-aspect-ratio: 1/1)").matches){document.documentElement.classList.add("intro");setTimeout(function(){document.documentElement.classList.remove("intro")},5000)}}catch(e){}
 </script>
 <style>
-:root{--bg:#f4ecd8;--card:#fbf6e9;--ink:#1d1b17;--mut:#7a7261;--line:#d9cdb0;--red:#e5322d;--ok:#2f7d4f}
+:root{--bg:#111313;--card:#1a1c1c;--ink:#ece7da;--mut:#8f8a7d;--line:#2c2e2d;--red:#d9534f;--ok:#7fbf95;color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
 body{min-height:100vh;padding:env(safe-area-inset-top) 16px calc(24px + env(safe-area-inset-bottom))}
@@ -30,7 +30,7 @@ header h1{font-size:22px;letter-spacing:1.5px;margin:0;font-weight:800;flex:1}
 h2{font-size:19px;margin:6px 0 14px}
 .store{display:block;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:15px 14px;margin-bottom:9px;font-size:15px;font-weight:600;color:var(--ink)}
 .store b{display:inline-block;min-width:48px}
-.store:active{background:#efe5c9}
+.store:active{background:#232626}
 label{display:block;font-size:12px;font-weight:700;color:var(--mut);margin:12px 0 4px;text-transform:uppercase;letter-spacing:.5px}
 input,select,textarea{width:100%;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:16px;color:var(--ink);font-family:inherit}
 input:focus,textarea:focus{outline:none;border-color:var(--ink)}
@@ -47,8 +47,8 @@ input:focus,textarea:focus{outline:none;border-color:var(--ink)}
 .item .imgs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}
 .item .imgs img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px}
 .item p{margin:2px 0;font-size:14px}
-.tag{font-size:11px;font-weight:800;border-radius:8px;padding:3px 7px;background:#f3d9a7}
-.tag.ok{background:#cfe8d7;color:var(--ok)}
+.tag{font-size:11px;font-weight:800;border-radius:8px;padding:3px 7px;background:#3a3222;color:#e6cf9c}
+.tag.ok{background:#1f3a2a;color:#9fd1ae}
 .acts{display:flex;gap:8px;margin-top:8px}
 .acts button{flex:1;border-radius:10px;padding:10px;font-weight:700;border:1.5px solid var(--ink);background:none;color:var(--ink);font-size:13px}
 .acts .go{background:var(--ink);color:var(--bg)}
@@ -58,60 +58,52 @@ input:focus,textarea:focus{outline:none;border-color:var(--ink)}
 dialog{border:2px solid var(--ink);border-radius:18px;background:var(--bg);color:var(--ink);width:min(92vw,420px);padding:18px}
 dialog::backdrop{background:rgba(0,0,0,.45)}
 
-/* ---- soft tema ---- */
-header{flex-direction:column;justify-content:center;gap:6px;padding:20px 0 14px}
-.brand{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;user-select:none;transition:transform .2s}
+/* ---- siyah soft tema ---- */
+header{flex-direction:column;justify-content:center;gap:6px;padding:26px 0 18px}
+.brand{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;user-select:none;transition:transform .2s}
 .brand:active{transform:scale(.94)}
-.brand img{width:60px;height:60px;display:block;border-radius:16px}
-.brand .name{font-size:20px;letter-spacing:3px;font-weight:800;color:#3a352c}
-.grid{max-width:340px;margin:10px auto 0;gap:14px}
-.tile{border:none;border-radius:20px;padding:16px 8px;min-height:68px;font-size:14px;font-weight:700;color:#3a352c;background:#fbf6e9;box-shadow:0 4px 12px rgba(90,70,30,.10);transition:transform .18s ease,box-shadow .18s ease;opacity:0;animation:rise .45s ease forwards}
-.tile:nth-child(1){background:#f1d9c9;animation-delay:.02s}
-.tile:nth-child(2){background:#d6e4d4;animation-delay:.07s}
-.tile:nth-child(3){background:#d3e0ea;animation-delay:.12s}
-.tile:nth-child(4){background:#e8dcc0;animation-delay:.17s}
-.tile:nth-child(5){background:#e6d4e4;animation-delay:.22s}
-.tile:nth-child(6){background:#f0cfcf;animation-delay:.27s}
-.tile:active{transform:scale(.95);box-shadow:0 1px 4px rgba(90,70,30,.12)}
-.tile.pop{animation:pop .22s ease}
-.badge{top:-7px;right:-5px;min-width:24px;height:24px;font-size:12px}
-.store{border:none;box-shadow:0 3px 9px rgba(90,70,30,.08);transition:transform .15s,background .15s}
-.store:active{transform:scale(.97)}
-.store.pop{animation:pop .22s ease}
-.page.show{animation:fade .3s ease}
-@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-@keyframes pop{0%{transform:scale(1)}45%{transform:scale(.93)}100%{transform:scale(1)}}
-@keyframes fade{from{opacity:0}to{opacity:1}}
-@media (prefers-reduced-motion:reduce){.tile,.page.show,.tile.pop,.store.pop{animation:none;opacity:1}}
+.brand img{width:58px;height:58px;display:block;border-radius:16px;box-shadow:0 0 0 1px rgba(255,255,255,.06),0 8px 24px rgba(0,0,0,.5)}
+.brand .name{font-size:19px;letter-spacing:4px;font-weight:700;color:var(--ink)}
+.brand:active img{transform:rotate(-12deg) scale(1.08)}
 
-/* ---- v2 animasyonlar ---- */
-.grid{max-width:360px}
-.tile{animation:spring .65s cubic-bezier(.34,1.56,.64,1) both;opacity:1}
-.tile:active{transform:scale(.96)}
+/* butonlar: alt alta, her biri kendi soft rengiyle */
+.grid{display:flex;flex-direction:column;gap:12px;max-width:420px;margin:14px auto 0}
+.tile{--c:#a8bfa5;position:relative;justify-content:flex-start;gap:14px;width:100%;min-height:64px;padding:0 20px 0 22px;border-radius:18px;text-align:left;font-size:15px;font-weight:600;letter-spacing:.2px;color:var(--ink);box-shadow:none;
+  background:#1a1c1c;border:1px solid rgba(255,255,255,.07);
+  background:color-mix(in srgb,var(--c) 11%,#16181a);border:1px solid color-mix(in srgb,var(--c) 26%,transparent);
+  transition:transform .2s cubic-bezier(.2,.8,.2,1),border-color .2s,background .2s;
+  animation:tileIn .8s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 75ms)}
+.tile::before{content:"";width:9px;height:9px;flex:none;border-radius:50%;background:var(--c);box-shadow:0 0 14px color-mix(in srgb,var(--c) 70%,transparent)}
+.tile::after{content:"›";margin-left:auto;font-size:22px;line-height:1;color:var(--c);opacity:.7;transition:transform .2s}
+.tile:active{transform:scale(.98);background:color-mix(in srgb,var(--c) 18%,#16181a)}
+.tile:active::after{transform:translateX(4px)}
 .tile.pop{animation:squish .38s cubic-bezier(.3,.7,.4,1)}
+.grid.single{margin-top:36px}
+.grid.single .tile{min-height:78px;font-size:16px}
+.badge{top:-8px;right:-4px;min-width:24px;height:24px;font-size:12px;border:2px solid var(--bg)}
+.store{border:1px solid var(--line);box-shadow:none;transition:transform .15s,background .15s;animation:tileIn .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 45ms)}
+.store:active{transform:scale(.98)}
 .store.pop{animation:squish .38s cubic-bezier(.3,.7,.4,1)}
+.item,.photo{border-color:var(--line)}
+.primary{color:#111313}
 .page.show{animation:slidein .38s cubic-bezier(.2,.8,.2,1)}
-.brand img{animation:bob 3.6s ease-in-out infinite}
-.brand:active img{transform:rotate(-14deg) scale(1.12)}
-.fly{position:fixed;z-index:60;pointer-events:none;filter:drop-shadow(0 3px 4px rgba(90,70,30,.25))}
-@keyframes spring{from{opacity:0;transform:translateY(22px) scale(.86)}to{opacity:1;transform:none}}
-@keyframes squish{0%{transform:scale(1)}30%{transform:scale(.92,1.05)}65%{transform:scale(1.04,.97)}100%{transform:scale(1)}}
+.fly{position:fixed;z-index:60;pointer-events:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5))}
+.brand img{animation:logoIn .8s cubic-bezier(.2,.8,.2,1) both}
+@keyframes tileIn{from{opacity:0;transform:translateY(26px) scale(.97);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+@keyframes logoIn{from{opacity:0;transform:translateY(-10px) scale(.85)}to{opacity:1;transform:none}}
+@keyframes squish{0%{transform:scale(1)}30%{transform:scale(.96,1.02)}65%{transform:scale(1.015,.99)}100%{transform:scale(1)}}
 @keyframes slidein{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}
-@keyframes bob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(-3deg)}}
-@media (prefers-reduced-motion:reduce){.brand img{animation:none}}
+@media (prefers-reduced-motion:reduce){.tile,.store,.brand img,.page.show{animation:none}}
 
-/* ---- açılış animasyonu ---- */
-#intro{display:none;position:fixed;inset:0;z-index:100;background:#2c3e33;overflow:hidden}
+/* ---- açılış: şıklatma videosu ---- */
+#intro{display:none;position:fixed;inset:0;z-index:100;background:#fafafa;overflow:hidden}
+#intro video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 html.intro #intro{display:block}
-html.intro .tile{opacity:0;animation:none}
-.intro-wave{position:absolute;border-radius:50%;transform:scale(0);will-change:transform}
-.intro-plane{position:absolute;left:0;top:0;width:64px;height:64px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35));will-change:transform}
-.grid.single{grid-template-columns:1fr;max-width:300px;margin-top:40px}
-.grid.single .tile{min-height:96px;font-size:16px}
+html.intro .tile,html.intro .brand img{opacity:0;animation:none}
 </style>
 </head>
 <body>
-<div id="intro" aria-hidden="true"><svg class="intro-plane" id="introPlane" viewBox="0 0 48 48"><path d="M4 22 L44 6 L30 42 L22 28 Z" fill="#f4ecd8" stroke="#f4ecd8" stroke-width="3" stroke-linejoin="round"/><path d="M22 28 L44 6 M22 28 L24 38" stroke="#2c3e33" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg></div>
+<div id="intro" aria-hidden="true"><video id="introVideo" muted playsinline preload="auto" poster="intro/poster.jpg"><source src="intro/snap.mp4" type="video/mp4"><source src="intro/snap.webm" type="video/webm"></video></div>
 <header>
   <div id="logoBtn" class="brand" role="button" tabindex="0" aria-label="Ana sayfa">
     <img src="icons/logo.svg" alt="">
