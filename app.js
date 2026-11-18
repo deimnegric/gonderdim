@@ -38,6 +38,12 @@ if (configured) { app = initializeApp(firebaseConfig); db = getFirestore(app); }
 let mails = JSON.parse(localStorage.getItem("gd_mails") || "{}");
 let reports = [];
 let swReg = null;
+const isAdmin = () => {
+  const f = localStorage.getItem("gd_admin");
+  if (f === "1") return true;
+  if (f === "0") return false;
+  return "Notification" in window && Notification.permission === "granted";
+};
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js").then(r => swReg = r).catch(() => {});
@@ -70,16 +76,20 @@ function openMail(btn, store) {
 
 // ---------- Ana sayfa ----------
 function renderTiles() {
+  const admin = isAdmin();
   const pending = reports.filter(r => r.status === "pending").length;
-  $("tiles").innerHTML = BUTTONS.map(b => {
-    const badge = (b.special === "adet" && pending > 0) ? `<span class="badge">${pending}</span>` : "";
-    return `<button class="tile" data-key="${b.key}">${esc(b.label)}${badge}</button>`;
+  const list = admin ? BUTTONS : BUTTONS.filter(b => b.special === "adet");
+  $("tiles").classList.toggle("single", !admin);
+  $("tiles").innerHTML = list.map(b => {
+    const badge = (b.special === "adet" && admin && pending > 0) ? `<span class="badge">${pending}</span>` : "";
+    const label = admin ? b.label : "Adet Bildirimi Gönder";
+    return `<button class="tile" data-key="${b.key}">${esc(label)}${badge}</button>`;
   }).join("");
-  if ("setAppBadge" in navigator) { (pending ? navigator.setAppBadge(pending) : navigator.clearAppBadge()).catch(() => {}); }
+  if ("setAppBadge" in navigator) { (admin && pending ? navigator.setAppBadge(pending) : navigator.clearAppBadge()).catch(() => {}); }
 }
 function openTile(key) {
   const b = BUTTONS.find(x => x.key === key);
-  if (b.special === "adet") { renderAdetList(); go("adetPage"); return; }
+  if (b.special === "adet") { if (isAdmin()) { renderAdetList(); go("adetPage"); } else { initTalep(); go("talepPage"); } return; }
   $("storeTitle").textContent = b.label;
   $("storeList").innerHTML = STORES.map(s => {
     const [kod, ...rest] = s.split(" ");
@@ -110,10 +120,17 @@ $("storeList").addEventListener("click", e => {
   const s = e.target.closest(".store"); if (!s) return;
   withPop(s, () => openMail(BUTTONS.find(x => x.key === $("storeList").dataset.key), s.dataset.store));
 });
-$("logoBtn").addEventListener("click", () => { stack.length = 0; show("home"); history.replaceState(null, "", location.pathname + location.search); });
+let logoTaps = [];
+$("logoBtn").addEventListener("click", () => {
+  const n = Date.now(); logoTaps = logoTaps.filter(t => n - t < 2500); logoTaps.push(n);
+  stack.length = 0;
+  if (logoTaps.length >= 5) { logoTaps = []; renderAdmin(); show("adminPage"); return; }
+  show("home"); history.replaceState(null, "", location.pathname + location.search);
+});
 
 // ---------- /admin ----------
 function renderAdmin() {
+  $("adminToggle").textContent = isAdmin() ? "Bu cihaz: ADMIN (normal kullanıcı yap)" : "Bu cihaz: normal kullanıcı (admin yap)";
   $("mailFields").innerHTML = BUTTONS.map(b => `<label>${esc(b.label)}</label><input data-mk="${b.key}" type="text" inputmode="email" placeholder="ornek@firma.com" value="${esc(mails[b.key] || "")}">`).join("");
 }
 $("saveMails").addEventListener("click", async () => {
@@ -124,6 +141,10 @@ $("saveMails").addEventListener("click", async () => {
   else toast("Bu cihaza kaydedildi (Firebase ayarlı değil)");
 });
 $("notifBtn").addEventListener("click", enablePush);
+$("adminToggle").addEventListener("click", () => {
+  localStorage.setItem("gd_admin", isAdmin() ? "0" : "1");
+  renderAdmin(); renderTiles(); toast(isAdmin() ? "Bu cihaz admin oldu" : "Bu cihaz normal kullanıcı oldu");
+});
 
 async function enablePush() {
   try {
@@ -134,7 +155,8 @@ async function enablePush() {
     const reg = swReg || await navigator.serviceWorker.ready;
     const token = await getToken(getMessaging(app), { vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
     await setDoc(doc(db, "tokens", token.slice(-40)), { token, at: serverTimestamp() });
-    toast("Bildirimler açıldı");
+    localStorage.setItem("gd_admin", "1"); renderAdmin(); renderTiles();
+    toast("Bildirimler açıldı – bu cihaz admin oldu");
   } catch (e) { console.error(e); toast("Bildirim açılamadı"); }
 }
 
@@ -288,7 +310,7 @@ let first = true;
 function listen() {
   if (!db) return;
   onSnapshot(query(collection(db, "reports"), orderBy("createdAt", "desc")), snap => {
-    if (!first) {
+    if (!first && isAdmin()) {
       snap.docChanges().forEach(c => {
         if (c.type === "added" && c.doc.data().createdAt) notify("Yeni adet toplatma", `${c.doc.data().store} – ${c.doc.data().ad}`);
       });

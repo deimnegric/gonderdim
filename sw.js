@@ -1,4 +1,4 @@
-const CACHE = "gonderdim-v8";
+const CACHE = "gonderdim-v9";
 const ASSETS = ["./", "index.html", "talep/index.html", "admin/index.html", "app.js", "firebase-config.js", "manifest.webmanifest", "icons/logo.svg", "icons/icon-192.png", "icons/icon-512.png"];
 
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())); });
